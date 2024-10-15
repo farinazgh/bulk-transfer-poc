@@ -14,7 +14,7 @@
         <java.version>1.8</java.version>
         <azure.functions.maven.plugin.version>1.24.0</azure.functions.maven.plugin.version>
         <azure.functions.java.library.version>3.1.0</azure.functions.java.library.version>
-        <functionAppName>lyra-20241014103443842</functionAppName>
+        <functionAppName>lyra-messier57</functionAppName>
     </properties>
 
     <dependencies>
@@ -31,6 +31,13 @@
             <artifactId>azure-messaging-eventgrid</artifactId>
             <version>4.26.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.azure/azure-data-tables -->
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-data-tables</artifactId>
+            <version>12.4.4</version>
+        </dependency>
+
     </dependencies>
 
     <build>
