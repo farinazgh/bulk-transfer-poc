@@ -1,4 +1,4 @@
-package luna;
+package com.scor.bulktransfer.models;
 
 import java.util.Date;
 import java.util.Map;

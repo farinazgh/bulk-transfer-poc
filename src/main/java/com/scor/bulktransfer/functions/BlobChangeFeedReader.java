@@ -1,5 +1,4 @@
-package luna;
-
+package com.scor.bulktransfer.functions;
 
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
@@ -9,16 +8,16 @@ import com.microsoft.azure.functions.ExecutionContext;
 import com.microsoft.azure.functions.annotation.FunctionName;
 import com.microsoft.azure.functions.annotation.TimerTrigger;
 
-public class ChangeFeedLogger {
+public class BlobChangeFeedReader {
 
-    private static final String STORAGE_CONNECTION_STRING = "";
+    private static final String STORAGE_CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=bulktransferneu;AccountKey=yDD4z64cYMTXbKJfJsgn8D8B8YdcNa53sCipGFDc9iwCAeJhej6pvDw87EbDtP57SXOIrR23Q/cz+AStqcSiTQ==;EndpointSuffix=core.windows.net";
 
-    @FunctionName("ChangeFeedLogger")
+    @FunctionName("BlobChangeFeedReaderFunction")
     public void run(
             @TimerTrigger(name = "timerInfo", schedule = "0 */5 * * * *") String timerInfo,
             final ExecutionContext context) {
 
-        context.getLogger().info("Change Feed Logger function executed at: " + java.time.LocalDateTime.now());
+        context.getLogger().info("Blob Change Feed Reader function executed at: " + java.time.LocalDateTime.now());
 
         try {
             BlobServiceClient blobServiceClient = new BlobServiceClientBuilder()

@@ -2,8 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>luna</groupId>
-    <artifactId>lyra</artifactId>
+    <groupId>bulk-transfer-poc</groupId>
+    <artifactId>bulk-transfer-poc</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -14,7 +14,7 @@
         <java.version>1.8</java.version>
         <azure.functions.maven.plugin.version>1.24.0</azure.functions.maven.plugin.version>
         <azure.functions.java.library.version>3.1.0</azure.functions.java.library.version>
-        <functionAppName>lyra-messier57</functionAppName>
+        <functionAppName>bulktransferappneu</functionAppName>
     </properties>
 
     <dependencies>
@@ -23,26 +23,27 @@
             <artifactId>azure-functions-java-library</artifactId>
             <version>${azure.functions.java.library.version}</version>
         </dependency>
-
-        <!-- Azure Event Grid Library -->
-        <!-- https://mvnrepository.com/artifact/com.azure/azure-messaging-eventgrid -->
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-messaging-eventgrid</artifactId>
             <version>4.26.0</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.azure/azure-data-tables -->
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-data-tables</artifactId>
             <version>12.4.4</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.azure/azure-storage-blob -->
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-storage-blob</artifactId>
             <version>12.28.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-messaging-servicebus</artifactId>
+            <version>7.17.4</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -63,11 +64,10 @@
                 <version>${azure.functions.maven.plugin.version}</version>
                 <configuration>
                     <appName>${functionAppName}</appName>
-                    <resourceGroup>luna</resourceGroup>
+                    <resourceGroup>bulktransferneu</resourceGroup>
                     <appServicePlanName>java-functions-app-service-plan</appServicePlanName>
                     <region>northeurope</region>
                     <runtime>
-                        <!-- runtime os, could be windows, linux or docker-->
                         <os>linux</os>
                         <javaVersion>8</javaVersion>
                     </runtime>
