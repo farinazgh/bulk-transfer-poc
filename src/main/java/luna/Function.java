@@ -5,7 +5,6 @@ import com.azure.data.tables.TableClientBuilder;
 import com.azure.data.tables.models.TableEntity;
 import com.azure.data.tables.models.TableServiceException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.functions.ExecutionContext;
 import com.microsoft.azure.functions.annotation.EventGridTrigger;
@@ -29,17 +28,18 @@ public class Function {
     public void run(
             @EventGridTrigger(name = "event") EventSchema event,
             final ExecutionContext context) {
-        context.getLogger().info("Event content: ");
-        context.getLogger().info("Subject: " + event.subject);
-        context.getLogger().info("Time: " + event.eventTime); // automatically converted to Date by the runtime
-        context.getLogger().info("Id: " + event.id);
-        context.getLogger().info("Data: " + event.data);
-        context.getLogger().info("Data: " + event.data.keySet());
-        context.getLogger().info("Data: " + event.data.values());
+
+        Map<String, Object> metadata = createMetadata(event);
+        String metadataJson = convertToJson(metadata);
+        logDataToTableStorage(metadataJson, event.id, context);
+    }
+
+    private static Map<String, Object> createMetadata(EventSchema event) {
+        Map<String, Object> metadata = new HashMap<>();
 
         String url = String.valueOf(event.data.get("url"));
-        String fileName = url.substring(url.lastIndexOf('/') + 1);
-        Map<String, Object> metadata = new HashMap<>();
+        String fileName = extractFileNameFromUrl(url);
+
         metadata.put("Subject", event.subject);
         metadata.put("Id", event.id);
         metadata.put("Api", event.data.get("api"));
@@ -52,33 +52,56 @@ public class Function {
         metadata.put("Url", url);
         metadata.put("FileName", fileName);
         metadata.put("Sequencer", event.data.get("sequencer"));
-//        metadata.put("BatchId", batchId);
         metadata.put("EventTime", event.eventTime);
-        metadata.put("ProcessingTime", OffsetDateTime.now(ZoneOffset.UTC).toString());
-        metadata.put("ExpiryTimestamp", OffsetDateTime.now(ZoneOffset.UTC).plusDays(7).toString());
-        context.getLogger().info(">>>>>>>>>>>> metadata <<<<<<<<<<<<<<<<<<<");
-        context.getLogger().info(metadata.toString());
-        ObjectMapper objectMapper = new ObjectMapper();
-        String metadataJson;
-        try {
-            metadataJson = objectMapper.writeValueAsString(metadata);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-        context.getLogger().info("******************* json value ***************************");
-        context.getLogger().info(metadataJson);
-        context.getLogger().info("**************************** after ***************************");
+        metadata.put("ProcessingTime", getCurrentUtcTime());
+        metadata.put("ExpiryTimestamp", getExpiryTimestamp());
 
-        logDataToTableStorage(metadataJson, event.id, context);
+        return metadata;
+    }
+
+
+    private static String extractFileNameFromUrl(String url) {
+        return url.substring(url.lastIndexOf('/') + 1);
+    }
+
+    private static String getCurrentUtcTime() {
+        return OffsetDateTime.now(ZoneOffset.UTC).toString();
+    }
+
+    private static String getExpiryTimestamp() {
+        return OffsetDateTime.now(ZoneOffset.UTC).plusDays(7).toString();
+    }
+
+    private static String convertToJson(Map<String, Object> metadata) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(metadata);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error converting metadata to JSON", e);
+        }
     }
 
     private void logDataToTableStorage(String metadataJson, String eventId, ExecutionContext context) {
-        TableClient tableClient = new TableClientBuilder()
+        TableClient tableClient = getTableClient();
+        createTableIfNotExists(tableClient, context);
+
+        String partitionKey = getPartitionKey();
+        String rowKey = sanitizeForTableStorage(eventId);
+
+        TableEntity entity = createTableEntity(partitionKey, rowKey, metadataJson);
+        upsertTableEntity(tableClient, entity, context);
+
+        context.getLogger().info("File information logged into Azure Table Storage with PartitionKey: " + partitionKey + ", RowKey: " + rowKey);
+    }
+
+    private TableClient getTableClient() {
+        return new TableClientBuilder()
                 .connectionString(STORAGE_CONNECTION_STRING)
                 .tableName(TABLE_NAME)
                 .buildClient();
+    }
 
-        // Create table if not exist
+    private void createTableIfNotExists(TableClient tableClient, ExecutionContext context) {
         try {
             tableClient.createTable();
             context.getLogger().info("Table created: " + TABLE_NAME);
@@ -87,22 +110,25 @@ public class Function {
                 throw new RuntimeException("Failed to create table: " + e.getMessage(), e);
             }
         }
-
-        // Partition by date for better scalability
-        String partitionKey = OffsetDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_LOCAL_DATE);
-        String rowKey = sanitizeForTableStorage(eventId);
-
-        TableEntity entity = new TableEntity(partitionKey, rowKey)
-                .addProperty("Metadata", metadataJson)
-                .addProperty("ExpiryTimestamp", OffsetDateTime.now(ZoneOffset.UTC).plusDays(7).toString());
-
-        tableClient.upsertEntity(entity);
-
-        context.getLogger().info("File information logged into Azure Table Storage with PartitionKey: " + partitionKey + ", RowKey: " + rowKey);
     }
 
+    private String getPartitionKey() {
+        return OffsetDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_LOCAL_DATE);
+    }
+
+    private TableEntity createTableEntity(String partitionKey, String rowKey, String metadataJson) {
+        return new TableEntity(partitionKey, rowKey)
+                .addProperty("Metadata", metadataJson)
+                .addProperty("ExpiryTimestamp", OffsetDateTime.now(ZoneOffset.UTC).plusDays(7).toString());
+    }
+
+    private void upsertTableEntity(TableClient tableClient, TableEntity entity, ExecutionContext context) {
+        tableClient.upsertEntity(entity);
+    }
+
+
     private String sanitizeForTableStorage(String key) {
-        // Disallowed characters in PartitionKey and RowKey are: '/', '\\', '#', '?'
+        // not allowed characters in PartitionKey and RowKey
         return key.replace("/", "")
                 .replace("\\", "")
                 .replace("#", "")

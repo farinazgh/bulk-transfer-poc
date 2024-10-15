@@ -37,7 +37,12 @@
             <artifactId>azure-data-tables</artifactId>
             <version>12.4.4</version>
         </dependency>
-
+        <!-- https://mvnrepository.com/artifact/com.azure/azure-storage-blob -->
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-storage-blob</artifactId>
+            <version>12.28.0</version>
+        </dependency>
     </dependencies>
 
     <build>
