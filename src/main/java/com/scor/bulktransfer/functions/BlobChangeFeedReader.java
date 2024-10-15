@@ -10,7 +10,7 @@ import com.microsoft.azure.functions.annotation.TimerTrigger;
 
 public class BlobChangeFeedReader {
 
-    private static final String STORAGE_CONNECTION_STRING = "DefaultEndpointsProtocol=https;AccountName=bulktransferneu;AccountKey=yDD4z64cYMTXbKJfJsgn8D8B8YdcNa53sCipGFDc9iwCAeJhej6pvDw87EbDtP57SXOIrR23Q/cz+AStqcSiTQ==;EndpointSuffix=core.windows.net";
+    private static final String STORAGE_CONNECTION_STRING = "";
 
     @FunctionName("BlobChangeFeedReaderFunction")
     public void run(

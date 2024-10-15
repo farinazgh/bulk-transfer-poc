@@ -11,8 +11,7 @@ import com.microsoft.azure.functions.ExecutionContext;
  * sends the message to azure servicebus
  */
 public class MessagingService {
-    //    private static final String SERVICE_BUS_CONNECTION_STRING = System.getenv("SERVICE_BUS_CONNECTION_STRING");
-    private static final String SERVICE_BUS_CONNECTION_STRING = "Endpoint=sb://bulktransferneu.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=o9hc7VoDrXTtn2W4g4Y3PCoHmFTQO179k+ASbOu9Jrg=";
+        private static final String SERVICE_BUS_CONNECTION_STRING = System.getenv("SERVICE_BUS_CONNECTION_STRING");
 
     private static final String SERVICE_BUS_QUEUE_NAME = "bulktransferneu";
 
