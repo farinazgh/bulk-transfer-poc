@@ -19,31 +19,37 @@ public class StorageService {
 
     private final TableClient tableClient;
 
-    public StorageService() {
-        this.tableClient = createTableClient();
-        createTableIfNotExists();
+    private static final StorageService INSTANCE = new StorageService();
+
+    private StorageService() {
+        this.tableClient = createTableClient(TABLE_NAME);
+        createTableIfNotExists(tableClient);
     }
 
-    private TableClient createTableClient() {
+    public static StorageService getInstance() {
+        return INSTANCE;
+    }
+
+    private TableClient createTableClient(String tableName) {
         if (STORAGE_CONNECTION_STRING == null || STORAGE_CONNECTION_STRING.isEmpty()) {
             throw new IllegalStateException("Storage connection string is not set.");
         }
         return new TableClientBuilder()
                 .connectionString(STORAGE_CONNECTION_STRING)
-                .tableName(TABLE_NAME)
+                .tableName(tableName)
                 .buildClient();
     }
 
-    private void createTableIfNotExists() {
+    private void createTableIfNotExists(TableClient client) {
         try {
-            tableClient.createTable();
-            // conditional table creation
+            client.createTable();
         } catch (TableServiceException e) {
             if (e.getResponse().getStatusCode() != 409) { // 409 Conflict == table already exists
                 throw new IllegalStateException("Failed to create table: " + e.getMessage(), e);
             }
         }
     }
+
 
     public void logDataToTableStorage(String metadataJson, String eventId, ExecutionContext context) {
         String partitionKey = Utils.getCurrentDate();

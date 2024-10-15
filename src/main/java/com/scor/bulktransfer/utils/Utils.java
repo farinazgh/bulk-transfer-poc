@@ -5,11 +5,18 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 /**
- *  common functions.
+ * common functions.
  */
 public final class Utils {
 
     private Utils() {
+    }
+
+    public static String extractValidUrl(Object urlObj) {
+        if (urlObj == null) {
+            throw new IllegalArgumentException("URL is null.");
+        }
+        return urlObj.toString();
     }
 
     public static String extractFileNameFromUrl(String url) {
@@ -40,5 +47,9 @@ public final class Utils {
                 .replace("\\", "")
                 .replace("#", "")
                 .replace("?", "");
+    }
+
+    public static String nullSafe(Object obj) {
+        return obj != null ? obj.toString() : "";
     }
 }

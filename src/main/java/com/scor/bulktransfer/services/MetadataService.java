@@ -13,25 +13,37 @@ public class MetadataService {
 
     private static final int EXPIRY_DAYS = 7;
 
+    // Singleton Instance
+    private static final MetadataService INSTANCE = new MetadataService();
+
+    private MetadataService() {
+        // Private constructor to prevent instantiation
+    }
+
+    public static MetadataService getInstance() {
+        return INSTANCE;
+    }
+
     public Map<String, Object> createMetadata(EventSchema event) {
         Map<String, Object> metadata = new HashMap<>();
 
-        String url = String.valueOf(event.data.get("url"));
+        // Extract and validate required fields
+        String url = Utils.extractValidUrl(event.data.get("url"));
         String fileName = Utils.extractFileNameFromUrl(url);
 
-        metadata.put("Subject", event.subject);
-        metadata.put("Id", event.id);
-        metadata.put("Api", event.data.get("api"));
-        metadata.put("ClientRequestId", event.data.get("clientRequestId"));
-        metadata.put("RequestId", event.data.get("requestId"));
-        metadata.put("ETag", event.data.get("eTag"));
-        metadata.put("ContentType", event.data.get("contentType"));
-        metadata.put("ContentLength", event.data.get("contentLength"));
-        metadata.put("BlobType", event.data.get("blobType"));
+        metadata.put("Subject", Utils.nullSafe(event.subject));
+        metadata.put("Id", Utils.nullSafe(event.id));
+        metadata.put("Api", Utils.nullSafe(event.data.get("api")));
+        metadata.put("ClientRequestId", Utils.nullSafe(event.data.get("clientRequestId")));
+        metadata.put("RequestId", Utils.nullSafe(event.data.get("requestId")));
+        metadata.put("ETag", Utils.nullSafe(event.data.get("eTag")));
+        metadata.put("ContentType", Utils.nullSafe(event.data.get("contentType")));
+        metadata.put("ContentLength", Utils.nullSafe(event.data.get("contentLength")));
+        metadata.put("BlobType", Utils.nullSafe(event.data.get("blobType")));
         metadata.put("Url", url);
         metadata.put("FileName", fileName);
-        metadata.put("Sequencer", event.data.get("sequencer"));
-        metadata.put("EventTime", event.eventTime);
+        metadata.put("Sequencer", Utils.nullSafe(event.data.get("sequencer")));
+        metadata.put("EventTime", Utils.nullSafe(event.eventTime));
         metadata.put("ProcessingTime", Utils.getCurrentUtcTime());
         metadata.put("ExpiryTimestamp", Utils.getExpiryTimestamp(EXPIRY_DAYS));
 

@@ -10,19 +10,30 @@ import com.microsoft.azure.functions.ExecutionContext;
 /**
  * sends the message to azure servicebus
  */
-public class MessagingService {
-        private static final String SERVICE_BUS_CONNECTION_STRING = System.getenv("SERVICE_BUS_CONNECTION_STRING");
 
+public class MessagingService {
+    private static final String SERVICE_BUS_CONNECTION_STRING = System.getenv("SERVICE_BUS_CONNECTION_STRING");
     private static final String SERVICE_BUS_QUEUE_NAME = "bulktransferneu";
 
     private final ServiceBusSenderClient senderClient;
 
-    public MessagingService() {
-        senderClient = new ServiceBusClientBuilder()
+    // Singleton Instance
+    private static final MessagingService INSTANCE = new MessagingService();
+
+    private MessagingService() {
+        if (SERVICE_BUS_CONNECTION_STRING == null || SERVICE_BUS_CONNECTION_STRING.isEmpty()) {
+            throw new IllegalStateException("Service Bus connection string is not set.");
+        }
+
+        this.senderClient = new ServiceBusClientBuilder()
                 .connectionString(SERVICE_BUS_CONNECTION_STRING)
                 .sender()
                 .queueName(SERVICE_BUS_QUEUE_NAME)
                 .buildClient();
+    }
+
+    public static MessagingService getInstance() {
+        return INSTANCE;
     }
 
     public void sendMessage(String messageContent, ExecutionContext context) {
@@ -35,5 +46,9 @@ public class MessagingService {
             throw new RuntimeException("Failed to send message to Service Bus", e);
         }
     }
-    //todo to close or not to close the client?
+
+
+    public void close() {
+        senderClient.close();
+    }
 }

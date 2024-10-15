@@ -16,15 +16,13 @@ import java.util.Map;
  */
 public class EventGridMetadataLoggerFunction {
 
-    private final MetadataService metadataService = new MetadataService();
-    private final JsonService jsonService = new JsonService();
-    private final StorageService storageService = new StorageService();
-    private final MessagingService messagingService = new MessagingService();
+    private static final MetadataService metadataService = MetadataService.getInstance();
+    private static final JsonService jsonService = JsonService.getInstance();
+    private static final StorageService storageService = StorageService.getInstance();
+    private static final MessagingService messagingService = MessagingService.getInstance();
 
     @FunctionName("EventGridListener")
-    public void run(
-            @EventGridTrigger(name = "event") EventSchema event,
-            final ExecutionContext context) {
+    public void run(@EventGridTrigger(name = "event") EventSchema event, final ExecutionContext context) {
 
         context.getLogger().info("EventGridListener function triggered.");
 
