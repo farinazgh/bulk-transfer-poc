@@ -18,6 +18,7 @@ import java.time.ZoneOffset;
 public class CleanupService {
 
     private static final String STORAGE_CONNECTION_STRING = System.getenv("STORAGE_CONNECTION_STRING");
+
     private static final String TABLE_NAME = "FileMetadata";
 
     private final TableClient tableClient;
