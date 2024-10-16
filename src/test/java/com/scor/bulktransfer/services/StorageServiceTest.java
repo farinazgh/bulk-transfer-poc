@@ -31,17 +31,14 @@ public class StorageServiceTest {
     private ExecutionContext contextMock;
 
     @Mock
-    private Logger loggerMock;  // Mock the logger
+    private Logger loggerMock;
 
     private StorageService storageService;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        // Mock the logger to avoid NullPointerException
         when(contextMock.getLogger()).thenReturn(loggerMock);
-
-        // Manually instantiate StorageService with mocks
         storageService = new StorageService(tableClientMock, processedEventsClientMock);
     }
 
@@ -50,11 +47,8 @@ public class StorageServiceTest {
         String metadataJson = "{\"key\":\"value\"}";
         String eventId = "event123";
 
-        // Mocking behavior
         doNothing().when(tableClientMock).upsertEntity(any(TableEntity.class));
         doNothing().when(processedEventsClientMock).createEntity(any(TableEntity.class));
-
-        // Mock logging behavior
         doNothing().when(loggerMock).info(anyString());
 
         storageService.logDataToTableStorage(metadataJson, eventId, contextMock);
@@ -84,12 +78,10 @@ public class StorageServiceTest {
     public void testIsEventProcessed_EventDoesNotExist() throws IOException {
         String eventId = "event123";
 
-        // Mock HttpResponse
         HttpResponse mockResponse = mock(HttpResponse.class);
         when(mockResponse.getStatusCode()).thenReturn(404);
         when(mockResponse.getHeaders()).thenReturn(new HttpHeaders());
 
-        // Create TableServiceException with mocked HttpResponse
         TableServiceException exception = new TableServiceException("Not Found", mockResponse);
 
         when(processedEventsClientMock.getEntity("ProcessedEventsPartition", eventId))
@@ -103,12 +95,10 @@ public class StorageServiceTest {
     public void testIsEventProcessed_TableServiceException() throws IOException {
         String eventId = "event123";
 
-        // Mock HttpResponse
         HttpResponse mockResponse = mock(HttpResponse.class);
         when(mockResponse.getStatusCode()).thenReturn(500);
         when(mockResponse.getHeaders()).thenReturn(new HttpHeaders());
 
-        // Create TableServiceException with mocked HttpResponse
         TableServiceException exception = new TableServiceException("Internal Server Error", mockResponse);
 
         when(processedEventsClientMock.getEntity("ProcessedEventsPartition", eventId))
