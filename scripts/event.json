@@ -1,0 +1,26 @@
+{
+  "topic": "/subscriptions/5cedfc94-4751-491a-94d7-5870384583c9/resourceGroups/bulktransferneu/providers/Microsoft.Storage/storageAccounts/bulktransferneu",
+  "subject": "/blobServices/default/containers/vega/blobs/questions.txt",
+  "source": "null",
+  "eventType": "Microsoft.Storage.BlobCreated",
+  "eventTime": "Sat Oct 19 12:35:22 UTC 2024",
+  "id": "3a3642ff-301e-006a-5623-22c92f06fdcf",
+  "dataVersion": "",
+  "metadataVersion": "1",
+  "data": {
+    "api": "PutBlob",
+    "clientRequestId": "3c764e78-21a4-45f5-af0f-aefe281a7026",
+    "requestId": "3a3642ff-301e-006a-5623-22c92f000000",
+    "eTag": "0x8DCF03A7FE4A82D",
+    "contentType": "text/plain",
+    "contentLength": 274.0,
+    "blobType": "BlockBlob",
+    "accessTier": "Default",
+    "url": "https://bulktransferneu.blob.core.windows.net/vega/questions.txt",
+    "sequencer": "0000000000000000000000000001E1F7000000000d3af235",
+    "storageDiagnostics": {
+      "batchId": "a38d9148-f006-005a-0023-2277e0000000"
+    }
+  },
+  "metadata": "null"
+}

@@ -16,23 +16,17 @@ import java.util.Map;
  */
 public class EventGridMetadataLoggerFunction {
 
-    private final MetadataService metadataService;
-    private final JsonService jsonService;
     private final StorageService storageService;
     private final MessagingService messagingService;
 
     // singleton for production
     public EventGridMetadataLoggerFunction() {
-        this.metadataService = MetadataService.getInstance();
-        this.jsonService = JsonService.getInstance();
         this.storageService = StorageService.getInstance();
         this.messagingService = MessagingService.getInstance();
     }
 
     //  for testing and injecting mock instances
     public EventGridMetadataLoggerFunction(MetadataService metadataService, JsonService jsonService, StorageService storageService, MessagingService messagingService) {
-        this.metadataService = metadataService;
-        this.jsonService = jsonService;
         this.storageService = storageService;
         this.messagingService = messagingService;
     }
@@ -53,10 +47,10 @@ public class EventGridMetadataLoggerFunction {
                 return;
             }
 
-            Map<String, Object> metadata = metadataService.createMetadata(event);
-            String metadataJson = jsonService.convertToJson(metadata);
+            Map<String, Object> metadata = MetadataService.createMetadata(event);
+            String metadataJson = JsonService.convertToJson(metadata);
             storageService.logDataToTableStorage(metadataJson, event.id, context);
-            messagingService.sendMessage(metadataJson, context);
+//            messagingService.sendMessage(metadataJson, context);
             context.getLogger().info(String.format("Successfully processed Event ID: %s", event.id));
 
         } catch (Exception e) {

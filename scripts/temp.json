@@ -1,0 +1,26 @@
+{
+  "eventId": "123e4567-e89b-12d3-a456-426614174000",
+  "timestamp": "2024-04-27T12:34:56Z",
+  "producer": {
+    "producerId": "producer-omega",
+    "producerName": "Omega",
+    "producerType": "AKSCluster",
+    "containerName": "omega-container"
+  },
+  "file": {
+    "fileName": "datafile_20240427.csv",
+    "blobUrl": "https://mystorageaccount.blob.core.windows.net/omega-container/datafile_20240427.csv",
+    "fileSize": 1048576,
+    "fileType": "csv",
+    "checksum": "3a7bd3e2360a3d6ebf..."
+  },
+  "metadata": {
+    "metadataId": "meta-123",
+    "partitionKey": "2024-04-27",
+    "rowKey": "event-123"
+  },
+  "processing": {
+    "priority": "high",
+    "deadline": "2024-04-28T12:00:00Z"
+  }
+}

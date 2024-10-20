@@ -14,7 +14,7 @@ public class BlobChangeFeedReader {
 
     @FunctionName("BlobChangeFeedReaderFunction")
     public void run(
-            @TimerTrigger(name = "timerInfo", schedule = "0 */5 * * * *") String timerInfo,
+            @TimerTrigger(name = "timerInfo", schedule = "0 0 0 * * *") String timerInfo,
             final ExecutionContext context) {
 
         context.getLogger().info("Blob Change Feed Reader function executed at: " + java.time.LocalDateTime.now());
