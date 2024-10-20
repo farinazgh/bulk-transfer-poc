@@ -55,7 +55,7 @@ public class MetadataService {
 
 
     private static void createBlobMetadata() {
-        String connectionString = "DefaultEndpointsProtocol=https;AccountName=bulktransferneu;AccountKey=74MNLQD6BITNwyD59iZdDkC9tJh9JtQk852G+GFhtqUbMiJfd3ozj2iYCekW8oJ/HtbOJnbV/p8l+AStlXttig==;EndpointSuffix=core.windows.net";
+        String connectionString = "";
         String containerName = String.valueOf(eventData.get("ContainerName"));
         String blobName = String.valueOf(eventData.get("FileName"));
         BlobServiceClient blobServiceClient = new BlobServiceClientBuilder().connectionString(connectionString).buildClient();
