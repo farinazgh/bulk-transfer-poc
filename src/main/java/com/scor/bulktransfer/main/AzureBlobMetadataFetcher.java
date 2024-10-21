@@ -1,6 +1,5 @@
 package com.scor.bulktransfer.main;
 
-
 import com.azure.storage.blob.*;
 import com.azure.storage.blob.models.*;
 
