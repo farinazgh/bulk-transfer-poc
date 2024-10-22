@@ -7,10 +7,9 @@ import java.util.Map;
 
 public class AzureBlobMetadataFetcher {
     public static void main(String[] args) {
-        // Connection string to your storage account
         String connectionString = "";
         String containerName = "lyra";
-        String blobName = "salut.txt";
+        String blobName = "hi.txt";
 
         BlobServiceClient blobServiceClient = new BlobServiceClientBuilder().connectionString(connectionString).buildClient();
 

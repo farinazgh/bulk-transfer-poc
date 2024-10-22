@@ -5,6 +5,7 @@ import com.microsoft.azure.functions.annotation.EventGridTrigger;
 import com.microsoft.azure.functions.annotation.FunctionName;
 import com.scor.bulktransfer.models.EventSchema;
 import com.scor.bulktransfer.services.JsonService;
+import com.scor.bulktransfer.services.MessagingService;
 import com.scor.bulktransfer.services.MetadataService;
 import com.scor.bulktransfer.services.StorageService;
 
@@ -42,6 +43,7 @@ public class EventGridMetadataLoggerFunction {
             context.getLogger().info("metadataJson before storage: " + metadataJson);
 
             storageService.logDataToTableStorage(metadataJson, event.id, context);
+            MessagingService.sendMessageToServiceBus(metadata, context);
 
             context.getLogger().info(String.format("Successfully processed Event ID: %s", event.id));
 
