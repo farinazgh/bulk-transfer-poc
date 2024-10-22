@@ -42,7 +42,7 @@ This project demonstrates how to integrate Azure Blob Storage, Event Grid, Azure
 
 ## Architecture Diagram
 
-_Architecture diagram will be added later._
+![mermaid-diagram-2024-10-22-194843](https://github.com/user-attachments/assets/acf806a5-40b9-464f-8162-4340a3117930)
 
 ## Azure Services Used
 
