@@ -1,0 +1,26 @@
+{
+  "eventId": "unique-event-id",
+  "timestamp": "ISO-8601-timestamp",
+  "producer": {
+    "producerId": "producer-identifier",
+    "producerName": "producer-name",
+    "producerType": "producer-type"
+  },
+  "file": {
+    "containerName": "container-name",
+    "fileName": "file-name",
+    "blobUrl": "https://storageaccount.blob.core.windows.net/container/file",
+    "fileSize": 123456,
+    "fileType": "file-type",
+    "checksum": "checksum-value"
+  },
+  "metadata": {
+    "metadataId": "metadata-id",
+    "partitionKey": "partition-key",
+    "rowKey": "row-key"
+  },
+  "processing": {
+    "priority": "low/medium/high",
+    "deadline": "ISO-8601-timestamp"
+  }
+}
