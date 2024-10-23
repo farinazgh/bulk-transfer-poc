@@ -66,11 +66,9 @@ public final class Utils {
         return null;
     }
     public static String generatePartitionKey(String eventId) {
-        // Example implementation: first 5 characters of the event ID
         return eventId.length() > 5 ? eventId.substring(0, 5) : eventId;
     }
     public static String generateRowKey(String eventId) {
-        // Example implementation: full event ID
         return eventId;
     }
 }

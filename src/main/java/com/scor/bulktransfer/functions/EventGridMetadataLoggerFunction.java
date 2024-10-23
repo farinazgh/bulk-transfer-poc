@@ -72,10 +72,10 @@ public class EventGridMetadataLoggerFunction {
             context.getLogger().severe(String.format("Error processing EventGrid event ID %s: %s", event.id, e.getMessage()));
             context.getLogger().severe(getStackTraceAsString(e));
 
-            // Send the failed event to dead-letter storage
+            // failed event to dead-letter
             sendToDeadLetter(event, e.getMessage(), context);
 
-            // Do not rethrow the exception to prevent Event Grid from retrying
+            // todo Does not rethrowing the exception prevent Event Grid from retrying?
         }
     }
 
@@ -84,17 +84,13 @@ public class EventGridMetadataLoggerFunction {
             ObjectMapper objectMapper = new ObjectMapper();
             String eventJson = objectMapper.writeValueAsString(event);
 
-            // Create a dead-letter message with error details
             String deadLetterMessage = objectMapper.writeValueAsString(
                     Map.of(
                             "errorMessage", errorMessage,
                             "failedEvent", eventJson
                     )
             );
-
-            // Send the message to the dead-letter queue
             deadLetterQueueClient.sendMessage(Base64.getEncoder().encodeToString(deadLetterMessage.getBytes(StandardCharsets.UTF_8)));
-
             context.getLogger().info("Event sent to dead-letter queue.");
 
         } catch (Exception ex) {

@@ -15,6 +15,8 @@ import java.util.Map;
 /**
  * extracts metadata from EventSchema.
  */
+// todo keep only relevant/required fields
+//todo clean up
 public class MetadataService {
 
     private static final int EXPIRY_DAYS = 7;
@@ -88,22 +90,18 @@ public class MetadataService {
     }
 
     static public String getProducerId(String subject) {
-        // Implement logic to extract Producer ID from the subject or other relevant fields
-        return "producer-" + subject.split("/")[4].toLowerCase(); // Example extraction based on container name
+        return "producer-" + subject.split("/")[4].toLowerCase();
     }
 
 
     static public String getProducerName(String subject) {
-        // Implement logic to extract Producer Name from the subject or other relevant fields
         String[] parts = subject.split("/");
         return parts.length >= 5 ? capitalizeFirstLetter(parts[4]) : "Unknown";
     }
 
 
     static public String getProducerType(String subject) {
-        // Implement logic to determine Producer Type
-        // Example: Return a fixed type or extract from subject
-        return "AKSCluster"; // Example value
+        return "AKSCluster";//for test
     }
 
 

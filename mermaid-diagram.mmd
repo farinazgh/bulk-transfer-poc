@@ -1,0 +1,72 @@
+flowchart LR
+    subgraph Producers
+        A["Compute Units<br/>(AKS Clusters/Azure VMs)"]
+    end
+
+    A -- azcopy + metadata --> B["Azure Blob Storage"]
+
+    B -- "Blob Created Event" --> C["Azure Event Grid"]
+
+    C -- "Event Trigger" --> D["EventGridMetadataLoggerFunction"]
+
+    D --> |Check if Event Processed?| E{"Event Processed?"}
+
+    E -- Yes --> F["Exit Function"]
+
+    E -- No --> G["Extract Metadata<br/>and Process"]
+
+    G --> H["Azure Table Storage<br/>(FileMetadata)"]
+
+    G --> I["Send Message to<br/>Azure Service Bus Topic"]
+
+    I --> J["Azure Service Bus Topic"]
+
+    %% Multiple Subscriptions
+    J --> |"Subscription 1"| K1["Subscription for Consumer 1"]
+    J --> |"Subscription 2"| K2["Subscription for Consumer 2"]
+    J --> |"Subscription 3"| K3["Subscription for Consumer 3"]
+
+    K1 --> L1["Consumer 1"]
+    K2 --> L2["Consumer 2"]
+    K3 --> L3["Consumer 3"]
+
+    D --> M["Mark Event as Processed"]
+
+    M --> N["Azure Table Storage<br/>(ProcessedEvents)"]
+
+    %% Dead-lettering path
+    D -- "Exception Occurs" --> O["Event Grid Retry Policy"]
+
+    O -- "Retries Exhausted" --> P["Dead-lettered Event"]
+
+    P --> Q["Azure Storage Blob<br/>(Dead-letter Container)"]
+
+    Q --> R["DeadLetterProcessorFunction"]
+
+    R --> S["Handle Dead-lettered Events"]
+
+    %% Cleanup Function
+    T["CleanupFunction"] -- "Timer Trigger<br/>(Daily)" --> U["Delete Expired Entries"]
+
+    U --> H
+
+    %% Styles for clarity
+    style B fill:#B0E0E6,stroke:#333,stroke-width:2px,color:#000
+    style D fill:#FFD700,stroke:#333,stroke-width:2px,color:#000
+    style H fill:#98FB98,stroke:#333,stroke-width:2px,color:#000
+    style N fill:#98FB98,stroke:#333,stroke-width:2px,color:#000
+    style J fill:#FFB6C1,stroke:#333,stroke-width:2px,color:#000
+    style K1 fill:#FFB6C1,stroke:#333,stroke-width:2px,color:#000
+    style K2 fill:#FFB6C1,stroke:#333,stroke-width:2px,color:#000
+    style K3 fill:#FFB6C1,stroke:#333,stroke-width:2px,color:#000
+    style Q fill:#FFA07A,stroke:#333,stroke-width:2px,color:#000
+
+    %% Clickable links (optional)
+    click A "https://docs.microsoft.com/azure/aks/" _blank
+    click B "https://docs.microsoft.com/azure/storage/blobs/" _blank
+    click C "https://docs.microsoft.com/azure/event-grid/" _blank
+    click D "https://docs.microsoft.com/azure/azure-functions/" _blank
+    click J "https://docs.microsoft.com/azure/service-bus-messaging/" _blank
+    click H "https://docs.microsoft.com/azure/storage/tables/" _blank
+    click N "https://docs.microsoft.com/azure/storage/tables/" _blank
+    click Q "https://docs.microsoft.com/azure/event-grid/dead-letter" _blank

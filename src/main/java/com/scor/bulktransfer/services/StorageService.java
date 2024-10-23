@@ -9,7 +9,7 @@ import com.scor.bulktransfer.utils.Utils;
 
 public class StorageService {
 
-    private static final String STORAGE_CONNECTION_STRING = "";
+    private static final String STORAGE_CONNECTION_STRING = System.getenv("STORAGE_CONNECTION_STRING");
     private static final String TABLE_NAME = "FileMetadata";
     private static final String PROCESSED_EVENTS_TABLE = "ProcessedEvents";
     private static final int EXPIRY_DAYS = 7;
@@ -59,10 +59,10 @@ public class StorageService {
     }
 
     public void logDataToTableStorage(String metadataJson, String eventId, ExecutionContext context) {
-//      Partition Key: groups related entities together to distribute data across servers. entities with the same partition key are stored together and queried more efficiently.
+//        Partition Key: groups related entities together to distribute data across servers. entities with the same partition key are stored together and queried more efficiently.
         String partitionKey = getInstance().generatePartitionKey(eventId);
 
-        //      Row Key = unique within a partition ; serves as the identifier for a specific record within that partition.
+//        Row Key = unique within a partition ; serves as the identifier for a specific record within that partition.
         String rowKey = Utils.sanitizeForTableStorage(eventId);
 
         TableEntity entity = createTableEntity(partitionKey, rowKey, metadataJson);

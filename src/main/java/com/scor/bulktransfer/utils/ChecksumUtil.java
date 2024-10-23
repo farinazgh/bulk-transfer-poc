@@ -1,13 +1,14 @@
 package com.scor.bulktransfer.utils;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 
 public class ChecksumUtil {
     public static String computeChecksum(String filePath) throws Exception {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        InputStream fis = new FileInputStream(filePath);
+        InputStream fis = Files.newInputStream(Paths.get(filePath));
 
         byte[] byteArray = new byte[1024];
         int bytesCount;

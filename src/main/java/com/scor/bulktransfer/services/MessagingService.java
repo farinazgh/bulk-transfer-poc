@@ -9,7 +9,8 @@ import com.scor.bulktransfer.models.MessagePayload;
 import java.util.Map;
 
 public class MessagingService {
-    private static final String SERVICE_BUS_CONNECTION_STRING = "";
+    private static final String SERVICE_BUS_CONNECTION_STRING = System.getenv("SERVICE_BUS_CONNECTION_STRING");
+
     private static final String TOPIC_NAME = "bulktransfer-blobevents-topic";
     private static final ObjectMapper objectMapper = new ObjectMapper();
 

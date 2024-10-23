@@ -12,7 +12,7 @@ public class CleanupFunction {
     private final CleanupService cleanupService = new CleanupService();
 
     @FunctionName("CleanupExpiredEntries")
-//    once a day at midnight UTC time
+    // once a day at midnight UTC time
     public void run(
             @TimerTrigger(name = "cleanupTimer", schedule = "0 0 0 * * *") String timerInfo,
             final ExecutionContext context) {
@@ -24,7 +24,7 @@ public class CleanupFunction {
             context.getLogger().info("Deleted " + deletedCount + " expired entries from Azure Table Storage.");
         } catch (Exception e) {
             context.getLogger().severe("Error during cleanup: " + e.getMessage());
-            // todo rethrow/handle
+            // todo handle
         }
     }
 }

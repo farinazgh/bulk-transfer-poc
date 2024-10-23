@@ -20,7 +20,7 @@ public class ServiceBusTestConsumer {
     }
 
     public static void main(String[] args) {
-        String SERVICE_BUS_CONNECTION_STRING = "";
+        String SERVICE_BUS_CONNECTION_STRING = System.getenv("SERVICE_BUS_CONNECTION_STRING");
 
         String TOPIC_NAME = "bulktransfer-blobevents-topic";
 
@@ -36,7 +36,7 @@ public class ServiceBusTestConsumer {
                 .processor()
                 .topicName(topicName)
                 .subscriptionName(subscriptionName)
-                .processMessage(this::processMessage) // Use instance method reference
+                .processMessage(this::processMessage)
                 .processError(context -> System.out.printf("Error occurred: %s%n", context.getException()))
                 .buildProcessorClient();
 

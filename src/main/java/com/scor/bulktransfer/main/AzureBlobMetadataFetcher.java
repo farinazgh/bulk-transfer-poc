@@ -7,11 +7,12 @@ import java.util.Map;
 
 public class AzureBlobMetadataFetcher {
     public static void main(String[] args) {
-        String connectionString = "";
-        String containerName = "lyra";
-        String blobName = "hi.txt";
+        String STORAGE_CONNECTION_STRING = System.getenv("STORAGE_CONNECTION_STRING");
 
-        BlobServiceClient blobServiceClient = new BlobServiceClientBuilder().connectionString(connectionString).buildClient();
+        String containerName = "lyra";
+        String blobName = "test.txt";
+
+        BlobServiceClient blobServiceClient = new BlobServiceClientBuilder().connectionString(STORAGE_CONNECTION_STRING).buildClient();
 
         BlobContainerClient containerClient = blobServiceClient.getBlobContainerClient(containerName);
 

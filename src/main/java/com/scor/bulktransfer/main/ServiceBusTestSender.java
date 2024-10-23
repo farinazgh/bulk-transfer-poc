@@ -11,8 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ServiceBusTestSender {
-
-    private static final String SERVICE_BUS_CONNECTION_STRING = "";
+    private static final String SERVICE_BUS_CONNECTION_STRING = System.getenv("SERVICE_BUS_CONNECTION_STRING");
     private static final String TOPIC_NAME = "";
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -26,7 +25,7 @@ public class ServiceBusTestSender {
         try (ServiceBusSenderClient senderClient = new ServiceBusClientBuilder().connectionString(SERVICE_BUS_CONNECTION_STRING).sender().topicName(TOPIC_NAME).buildClient()) {
 
             Map<String, Object> metadata = new HashMap<>();
-            metadata.put("Url", "https://bulktransferneu.blob.core.windows.net/lyra/" + producerName + ".txt");
+            metadata.put("Url", "https://bulktransferneu.blob.core.windows.net/vega/" + producerName + ".txt");
             metadata.put("Checksum", "sampleChecksumValue");
             metadata.put("ContentLength", "2.0");
             metadata.put("BlobType", "BlockBlob");
