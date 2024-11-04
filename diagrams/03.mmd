@@ -1,0 +1,17 @@
+flowchart LR
+    I["Send Message to<br/>Azure Service Bus Topic"] --> J["Azure Service Bus Topic"]
+
+%% Multiple Subscriptions with SQL-like Filters
+    J --> |"Subscription 1<br/>Filter: producerName = 'producerName1'"| K1["Subscription for Consumer 1"]
+    J --> |"Subscription 2<br/>Filter: producerName = 'producerName2'"| K2["Subscription for Consumer 2"]
+    J --> |"Subscription 3<br/>Filter: producerName = 'producerName3'"| K3["Subscription for Consumer 3"]
+
+    K1 --> L1["Consumer 1"]
+    K2 --> L2["Consumer 2"]
+    K3 --> L3["Consumer 3"]
+
+%% Styles
+    style J fill:#FFB6C1,stroke:#333,stroke-width:2px,color:#000
+    style K1 fill:#FFB6C1,stroke:#333,stroke-width:2px,color:#000
+    style K2 fill:#FFB6C1,stroke:#333,stroke-width:2px,color:#000
+    style K3 fill:#FFB6C1,stroke:#333,stroke-width:2px,color:#000

@@ -1,0 +1,30 @@
+flowchart LR
+%% Dead-lettering for Event Grid
+    D["Azure Function"] -- "Exception Occurs" --> EG_Retry["Event Grid Retry Policy"]
+    EG_Retry -- "Retries Exhausted" --> EG_DL["Dead-lettered Event"]
+    EG_DL --> EG_DL_Storage["Azure Storage Blob<br/>(Dead-letter Container)"]
+    EG_DL_Storage --> EG_DL_Processor["DeadLetterProcessorFunction"]
+    EG_DL_Processor --> EG_Handle["Handle Dead-lettered Events"]
+
+%% Dead-lettering for Service Bus Subscriptions
+    L1 -- "Exception Occurs" --> SB_Retry1["Service Bus Retry Policy"]
+    SB_Retry1 -- "Retries Exhausted" --> SB_DL1["Dead-letter Queue<br/>(Subscription 1 DLQ)"]
+    SB_DL1 --> SB_DL_Processor1["DeadLetterProcessorFunction<br/>(Subscription 1)"]
+    SB_DL_Processor1 --> SB_Handle1["Handle Dead-lettered Messages"]
+
+    L2 -- "Exception Occurs" --> SB_Retry2["Service Bus Retry Policy"]
+    SB_Retry2 -- "Retries Exhausted" --> SB_DL2["Dead-letter Queue<br/>(Subscription 2 DLQ)"]
+    SB_DL2 --> SB_DL_Processor2["DeadLetterProcessorFunction<br/>(Subscription 2)"]
+    SB_DL_Processor2 --> SB_Handle2["Handle Dead-lettered Messages"]
+
+    L3 -- "Exception Occurs" --> SB_Retry3["Service Bus Retry Policy"]
+    SB_Retry3 -- "Retries Exhausted" --> SB_DL3["Dead-letter Queue<br/>(Subscription 3 DLQ)"]
+    SB_DL3 --> SB_DL_Processor3["DeadLetterProcessorFunction<br/>(Subscription 3)"]
+    SB_DL_Processor3 --> SB_Handle3["Handle Dead-lettered Messages"]
+
+%% Styles
+    style D fill:#FFD700,stroke:#333,stroke-width:2px,color:#000
+    style EG_DL_Storage fill:#FFA07A,stroke:#333,stroke-width:2px,color:#000
+    style SB_DL1 fill:#FFA07A,stroke:#333,stroke-width:2px,color:#000
+    style SB_DL2 fill:#FFA07A,stroke:#333,stroke-width:2px,color:#000
+    style SB_DL3 fill:#FFA07A,stroke:#333,stroke-width:2px,color:#000

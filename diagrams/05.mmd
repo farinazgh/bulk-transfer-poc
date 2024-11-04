@@ -1,0 +1,10 @@
+flowchart LR
+%% Cleanup Function
+    CF["CleanupFunction"] -- "Timer Trigger<br/>(Daily)" --> Clean["Delete Expired Entries"]
+
+    Clean --> H["Azure Table Storage<br/>(FileMetadata)"]
+
+%% Styles
+    style CF fill:#FFF,stroke:#333,stroke-width:2px,color:#000
+    style Clean fill:#FFF,stroke:#333,stroke-width:2px,color:#000
+    style H fill:#98FB98,stroke:#333,stroke-width:2px,color:#000

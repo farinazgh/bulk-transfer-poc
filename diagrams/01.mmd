@@ -1,0 +1,13 @@
+flowchart LR
+    subgraph Producers
+        A["Compute Units<br/>(AKS Clusters/Azure VMs)"]
+    end
+
+    A -- azcopy + metadata --> B["Azure Blob Storage"]
+
+    B -- "Blob Created Event" --> C["Azure Event Grid"]
+
+    %% Styles
+    style A fill:#FFF,stroke:#333,stroke-width:2px,color:#000
+    style B fill:#B0E0E6,stroke:#333,stroke-width:2px,color:#000
+    style C fill:#FFD700,stroke:#333,stroke-width:2px,color:#000
