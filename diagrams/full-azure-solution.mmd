@@ -1,0 +1,96 @@
+flowchart TD
+%% Producers Section
+    subgraph Producers
+        A["Compute Units<br/>(AKS Clusters/Azure VMs)"]
+    end
+
+    A -- "Calculate Checksum of File" --> B["Checksum Value"]
+    B -- "Upload File + Metadata<br/>(Including Checksum)" --> C["Azure Blob Storage"]
+
+%% Event Grid Section
+    C -- "Blob Created Event" --> D["Azure Event Grid"]
+
+%% Event Processing
+    D -- "Event Trigger" --> E["EventGridMetadataLoggerFunction"]
+
+    E --> |Check if Event Processed?| F{"Event Processed?"}
+    F -- Yes --> G["Exit Function"]
+    F -- No --> H["Extract Metadata<br/>and Process"]
+
+    H --> I["Azure Table Storage<br/>(FileMetadata)"]
+    H --> J["Send Message to<br/>Azure Service Bus Topic"]
+    E --> K["Mark Event as Processed"]
+    K --> L["Azure Table Storage<br/>(ProcessedEvents)"]
+
+%% Azure Service Bus and Consumer Section
+    J --> M["Azure Service Bus Topic"]
+
+%% Subscriptions with Filters
+    M --> |"Subscription 1<br/>Filter: producerName = 'omega'"| N1["Subscription for Consumer 1"]
+    M --> |"Subscription 2<br/>Filter: producerName = 'alpha'"| N2["Subscription for Consumer 2"]
+    M --> |"Subscription 3<br/>Filter: producerName = 'gamma'"| N3["Subscription for Consumer 3"]
+
+%% Consumer 1 Processing Workflow
+    N1 --> O1["Consumer 1"]
+    O1 --> P1["Extract Blob URL<br/>from Message"]
+    P1 --> Q1["Download Blob<br/>from Azure Blob Storage"]
+    Q1 --> R1["Compute Checksum<br/>of Downloaded File"]
+    R1 --> S1{"Checksum Valid?"}
+    S1 -- Yes --> T1["Process File and<br/>Business Logic"]
+    S1 -- No --> U1["Handle Checksum Error<br/>(e.g., Dead-Letter Message)"]
+    T1 --> V1["Acknowledge Message<br/>(Complete)"]
+    U1 --> V1
+
+%% Dead-lettering for Event Grid
+    E -- "Exception Occurs" --> W1["Event Grid Retry Policy"]
+    W1 -- "Retries Exhausted" --> X1["Dead-lettered Event"]
+    X1 --> Y1["Azure Storage Blob<br/>(Dead-letter Container)"]
+    Y1 --> Z1["DeadLetterProcessorFunction"]
+    Z1 --> AA1["Handle Dead-lettered Events"]
+
+%% Dead-lettering for Service Bus Subscriptions
+    O1 -- "Exception Occurs" --> AB1["Service Bus Retry Policy"]
+    AB1 -- "Retries Exhausted" --> AC1["Dead-letter Queue<br/>(Subscription 1 DLQ)"]
+    AC1 --> AD1["DeadLetterProcessorFunction<br/>(Subscription 1)"]
+    AD1 --> AE1["Handle Dead-lettered Messages"]
+
+%% Cleanup Function for Table Storage
+    AF["CleanupFunction"] -- "Timer Trigger<br/>(Daily)" --> AG["Delete Expired Entries"]
+    AG --> I
+    AG --> L
+
+%% Styles for Clarity
+    style A fill:#FFF,stroke:#333,stroke-width:2px,color:#000
+    style B fill:#FFF,stroke:#333,stroke-width:2px,color:#000
+    style C fill:#B0E0E6,stroke:#333,stroke-width:2px,color:#000
+    style D fill:#FFD700,stroke:#333,stroke-width:2px,color:#000
+    style E fill:#FFD700,stroke:#333,stroke-width:2px,color:#000
+    style F fill:#FFF,stroke:#333,stroke-width:2px,color:#000
+    style H fill:#FFF,stroke:#333,stroke-width:2px,color:#000
+    style I fill:#98FB98,stroke:#333,stroke-width:2px,color:#000
+    style J fill:#FFF,stroke:#333,stroke-width:2px,color:#000
+    style K fill:#FFF,stroke:#333,stroke-width:2px,color:#000
+    style L fill:#98FB98,stroke:#333,stroke-width:2px,color:#000
+    style M fill:#FFB6C1,stroke:#333,stroke-width:2px,color:#000
+    style N1 fill:#FFB6C1,stroke:#333,stroke-width:2px,color:#000
+    style N2 fill:#FFB6C1,stroke:#333,stroke-width:2px,color:#000
+    style N3 fill:#FFB6C1,stroke:#333,stroke-width:2px,color:#000
+    style O1 fill:#FFF,stroke:#333,stroke-width:2px,color:#000
+    style P1 fill:#FFF,stroke:#333,stroke-width:2px,color:#000
+    style Q1 fill:#FFF,stroke:#333,stroke-width:2px,color:#000
+    style R1 fill:#FFF,stroke:#333,stroke-width:2px,color:#000
+    style S1 fill:#FFF,stroke:#333,stroke-width:2px,color:#000
+    style T1 fill:#FFF,stroke:#333,stroke-width:2px,color:#000
+    style U1 fill:#FFF,stroke:#333,stroke-width:2px,color:#000
+    style V1 fill:#FFF,stroke:#333,stroke-width:2px,color:#000
+    style W1 fill:#FFA07A,stroke:#333,stroke-width:2px,color:#000
+    style X1 fill:#FFA07A,stroke:#333,stroke-width:2px,color:#000
+    style Y1 fill:#FFA07A,stroke:#333,stroke-width:2px,color:#000
+    style Z1 fill:#FFA07A,stroke:#333,stroke-width:2px,color:#000
+    style AA1 fill:#FFA07A,stroke:#333,stroke-width:2px,color:#000
+    style AB1 fill:#FFA07A,stroke:#333,stroke-width:2px,color:#000
+    style AC1 fill:#FFA07A,stroke:#333,stroke-width:2px,color:#000
+    style AD1 fill:#FFA07A,stroke:#333,stroke-width:2px,color:#000
+    style AE1 fill:#FFA07A,stroke:#333,stroke-width:2px,color:#000
+    style AF fill:#FFF,stroke:#333,stroke-width:2px,color:#000
+    style AG fill:#FFF,stroke:#333,stroke-width:2px,color:#000

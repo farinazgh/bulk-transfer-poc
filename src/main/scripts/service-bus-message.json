@@ -1,0 +1,18 @@
+{
+  "eventId": "422eed3a-d01e-006a-1a4f-2fba4f06b6ae",
+  "timestamp": "Tue Nov 05 06:51:59 UTC 2024",
+  "producer": {
+    "producerId": "98761",
+    "producerName": "omega",
+    "producerType": "aks-cluster"
+  },
+  "file": {
+    "containerName": "testcontainer",
+    "fileName": "thisisatestfile",
+    "blobUrl": "https://bulktransferneu.blob.core.windows.net/testcontainer/thisisatestfile",
+    "fileType": "file-type",
+    "fileSize": "513.0",
+    "blobType": "BlockBlob",
+    "checksum": "5a5deb08e1e3a7b90305714dd75c9e9c634612fb82ce0fab1e6ca4397bab7acd"
+  }
+}

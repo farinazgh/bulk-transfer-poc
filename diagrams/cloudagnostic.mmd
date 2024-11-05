@@ -1,0 +1,68 @@
+flowchart TD
+%% Producers
+    subgraph Producers
+        P1["Producer 1"]
+        P2["Producer 2"]
+        P3["Producer 3"]
+    end
+
+%% Consumers
+    subgraph Consumers
+        C1["Consumer 1"]
+        C2["Consumer 2"]
+        C3["Consumer 3"]
+    end
+
+%% Central Hub
+    subgraph CentralHub["Central File Transfer Hub"]
+        S1["File Storage System"]
+        E1["Event System"]
+        M1["Metadata Store"]
+        Q1["Messaging System"]
+        V1["Validation & Processing"]
+    end
+
+%% Producers upload files
+    P1 -- "Upload File + Metadata" --> S1
+    P2 -- "Upload File + Metadata" --> S1
+    P3 -- "Upload File + Metadata" --> S1
+
+%% Event Generation
+    S1 -- "File Uploaded Event" --> E1
+
+%% Event Processing
+    E1 -- "Trigger" --> V1
+    V1 -- "Extract Metadata & Validate File" --> M1
+    V1 -- "Generate Message with File Info" --> Q1
+
+%% Consumers receive messages
+    Q1 -- "Message with File Info" --> C1
+    Q1 -- "Message with File Info" --> C2
+    Q1 -- "Message with File Info" --> C3
+
+%% Consumers download files
+    C1 -- "Download File from Storage" --> S1
+    C2 -- "Download File from Storage" --> S1
+    C3 -- "Download File from Storage" --> S1
+
+%% Data Integrity Checks
+    C1 -- "Verify Checksum" --> C1
+    C2 -- "Verify Checksum" --> C2
+    C3 -- "Verify Checksum" --> C3
+
+%% Acknowledgements
+    C1 -- "Acknowledge Processing" --> CentralHub
+    C2 -- "Acknowledge Processing" --> CentralHub
+    C3 -- "Acknowledge Processing" --> CentralHub
+
+%% Error Handling and Retry Mechanism
+    V1 -- "Error Occurred?" --> ER{"Error Handling & Retry"}
+    ER -- "Log Error" --> M1
+    ER -- "Retry or Discard" --> V1
+
+%% Styles for Clarity
+    style P1,P2,P3 fill:#E3F2FD,stroke:#333,stroke-width:1px
+    style C1,C2,C3 fill:#FFF3E0,stroke:#333,stroke-width:1px
+    style CentralHub fill:#E8F5E9,stroke:#333,stroke-width:2px
+    style S1,E1,M1,Q1,V1 fill:#FFFFFF,stroke:#333,stroke-width:1px
+    style ER fill:#FFCDD2,stroke:#333,stroke-width:1px
